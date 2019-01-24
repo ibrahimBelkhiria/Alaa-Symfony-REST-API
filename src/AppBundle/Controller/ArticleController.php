@@ -5,9 +5,11 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Article;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\View\View;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 class ArticleController extends AbstractFOSRestController
 {
@@ -55,18 +57,24 @@ class ArticleController extends AbstractFOSRestController
 
     /**
      * @Rest\Post("/api/articles",name="create_article")
-     * @param Request $request
+     *
+     * @ParamConverter("article",converter="fos_rest.request_body")
+     * @param Article $article
+     * @param ConstraintViolationList $violations
      * @return View
      */
 
-    public  function createArticle(Request $request)
+    public  function createArticle(Article  $article,ConstraintViolationList $violations)
     {
 
         $entityManager = $this->getDoctrine()->getManager();
 
-        $article = new Article();
-        $article->setName($request->get('name'));
-        $article->setDescription($request->get('description'));
+
+
+        if(count($violations))
+        {
+            return View::create($violations,Response::HTTP_BAD_REQUEST);
+        }
 
         $entityManager->persist($article);
 
