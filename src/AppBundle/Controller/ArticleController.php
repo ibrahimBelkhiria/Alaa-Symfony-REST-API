@@ -41,6 +41,13 @@ class ArticleController extends AbstractFOSRestController
         $entityManager = $this->getDoctrine()->getManager();
         $article = $entityManager->getRepository(Article::class)->find($id);
 
+        if(empty($article))
+        {
+            return View::create("Article Not found",Response::HTTP_NOT_FOUND);
+        }
+
+
+
         return View::create($article,Response::HTTP_OK);
 
     }
@@ -84,6 +91,12 @@ class ArticleController extends AbstractFOSRestController
 
 
         $article = $articleRepo->find($id);
+
+        if(empty($article))
+        {
+            return View::create("Article Not found",Response::HTTP_NOT_FOUND);
+        }
+
         $article->setName($request->get('name'));
         $article->setDescription($request->get('description'));
 
@@ -108,6 +121,12 @@ class ArticleController extends AbstractFOSRestController
 
 
         $article = $articleRepo->find($id);
+
+        if(empty($article))
+        {
+            return View::create("Article Not found",Response::HTTP_NOT_FOUND);
+        }
+
 
         $entityManager->remove($article);
 
